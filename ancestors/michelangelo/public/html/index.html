@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>michelangelo</title>
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/stylesheets/app.css">
+    <script src="https://kit.fontawesome.com/ac24c7ffe1.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <nav class="flex-centered">
+        <a href="">
+            <img src="/images/favicon.png" alt="">
+            <h2>michelangelo</h2>
+        </a>
+    </nav>
+
+    <main>
+        <section id="hero">
+            <img src="/images/turtle.png" alt="" class="flex-self-centered">
+            <h3 class="flex-self-centered">
+                <p>Try not to use a cheat code</p>
+                <p>powered by <a href="https://www.igdb.com/api" target="_blank">IGDB</a></p>
+                <a href="#games"><button>Explore</button></a>
+            </h3>
+        </section>
+
+        <section id="games">
+            <div class="loader flex-self-centered"></div>
+            <div class="loader flex-self-centered"></div>
+            <div class="loader flex-self-centered"></div>
+
+            <h4 class="flex-self-centered">Popular Games</h4>
+            <div id="popular">
+                <div class="arrow flex-self-centered">
+                    <i class="fa-solid fa-angle-left fa-2x"></i></div>
+                <div class="arrow flex-self-centered">
+                    <i class="fa-solid fa-angle-right fa-2x"></i></div>
+            </div>
+
+            <h4 class="flex-self-centered">Recent Releases</h4>
+            <div id="recent">
+                <div class="arrow flex-self-centered">
+                    <i class="fa-solid fa-angle-left fa-2x"></i></div>
+                <div class="arrow flex-self-centered">
+                    <i class="fa-solid fa-angle-right fa-2x"></i></div>
+            </div>
+
+            <h4 class="flex-self-centered">Search by Genres</h4>
+            <ul id="genres"></ul>
+            
+            <h4 class="flex-self-centered">Search by Platforms</h4>
+            <ul id="platforms">
+                <li id="6" class="platform-item">
+                    <a href="" class="flex-centered"><img src="/images/platforms/win.png" alt=""></a>
+                </li>
+                <li id="1" class="platform-item">
+                    <a href="" class="flex-centered"><img src="/images/platforms/playstation.png" alt=""></a>
+                </li>
+                <li id="2" class="platform-item">
+                    <a href="" class="flex-centered"><img src="/images/platforms/xbox.png" alt=""></a>
+                </li>
+                <li id="5" class="platform-item">
+                    <a href="" class="flex-centered"><img src="/images/platforms/nintendo.png" alt=""></a>
+                </li>
+                <li id="3" class="platform-item">
+                    <a href="" class="flex-centered"><img src="/images/platforms/sega.png" alt=""></a>
+                </li>
+            </ul>
+        </section>
+    </main>
+    
+    <footer class="flex-centered">
+        <p>&copy2022 michelangelo</p>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    <script src="/js/home.js"></script>
+</body>
+</html>
