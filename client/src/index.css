@@ -11,3 +11,46 @@
     font-family: 'GameOfSquids';
     src: url('../public/fonts/GameOfSquids.ttf');
 }
+
+* {
+    --primary-color: #00E676;
+    --shadow-color: #171717;
+}
+
+::selection {
+    color: black;
+    background-color: var(--primary-color);
+    text-shadow: none;
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: darkslategrey;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+}
+
+.home-grid-custom {
+    display: grid;
+    grid-template-rows: 0.15fr 1fr 0.15fr;
+}
+
+.text-shadow-custom {
+    text-shadow: 5px 5px 5px var(--shadow-color);
+}
+.box-shadow-custom {
+    box-shadow: 1px 1px 10px 1px var(--shadow-color);
+}
+.image-shadow-custom {
+    filter: drop-shadow(3px 3px 1px var(--shadow-color));
+}
+.remove-shadows-custom {
+    text-shadow: none;
+    box-shadow: none;
+    filter: drop-shadow(none);
+}

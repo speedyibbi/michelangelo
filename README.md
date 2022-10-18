@@ -3,9 +3,11 @@
 Video game info website based on the
 [IGDB](https://www.igdb.com/api) database api.
 
-Server: ExpressJS Application w/ TypeScript + ESLint
+Client: React Application
 
-Client: React App
+Server: ExpressJS Application
+
+w/ TypeScript + ESLint
 
 ```bash
 ---work in progress---
