@@ -1,16 +1,13 @@
-/* eslint-disable react/no-unknown-property */
 import React, { ReactElement } from 'react'
 import { Canvas } from '@react-three/fiber'
+import WebGLPlayground from './WebGL Playground'
 
-const HomeCanvas = (): ReactElement => {
+const WebGLCanvas = (): ReactElement => {
   return (
     <Canvas>
-        <mesh>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial />
-        </mesh>
+      <WebGLPlayground color='#00ffaa' />
     </Canvas>
   )
 }
 
-export default HomeCanvas
+export default WebGLCanvas

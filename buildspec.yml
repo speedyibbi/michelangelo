@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing Node...
+      - curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+      - apt install -y nodejs
+  pre_build:
+    commands:
+      - echo Installing source NPM dependencies...
+      - npm install --prefix client
+      - npm install --prefix server
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building React code
+      - npm run build --prefix client
+      - echo Compiling the Node.js code
+      - npx tsc --prefix server
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - client/build/**/*
+    - client/build/*
+    - server/**/*
+    - server/*
+  discard-paths: no
+  base-directory: server/dist

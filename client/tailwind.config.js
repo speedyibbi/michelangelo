@@ -29,8 +29,8 @@ module.exports = {
         squids: ['GameOfSquids', 'cursive']
       },
       backgroundImage: {
-        cover: 'linear-gradient(to right bottom, #414345, #232526)'
-        // cover: 'linear-gradient(to right bottom, rgba(50, 50, 50, 0.9), rgba(0, 0, 0, 0.9)), url("../public/images/cover.jpg")'
+        // cover: 'linear-gradient(to right bottom, #414345, #232526)'
+        cover: 'linear-gradient(to right bottom, rgba(50, 50, 50, 0.9), rgba(0, 0, 0, 0.9)), url("../public/images/cover.jpg")'
       }
     }
   },
