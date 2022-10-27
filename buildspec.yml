@@ -26,4 +26,3 @@ artifacts:
     - server/**/*
     - server/*
   discard-paths: no
-  base-directory: server/dist
