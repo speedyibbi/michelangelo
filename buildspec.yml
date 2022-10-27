@@ -15,7 +15,7 @@ phases:
       - echo Building React code
       - npm run build --prefix client
       - echo Compiling the Node.js code
-      - npx tsc --prefix server
+      - npm run build --prefix server
   post_build:
     commands:
       - echo Build completed on `date`
