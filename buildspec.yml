@@ -2,10 +2,8 @@ version: 0.2
 
 phases:
   install:
-    commands:
-      - echo Installing Node...
-      - curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - &&\
-      - sudo yum -y nodejs
+    runtime-versions:
+      nodejs: 16
   pre_build:
     commands:
       - echo Installing source NPM dependencies...
