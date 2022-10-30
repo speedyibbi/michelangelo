@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "speedyibbi",
   "main": "app.js",
   "scripts": {
@@ -10,6 +10,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.1.3",
     "express": "^4.18.1"
   },
   "devDependencies": {

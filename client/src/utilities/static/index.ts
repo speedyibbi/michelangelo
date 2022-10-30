@@ -1,4 +1,4 @@
-import quoteInterface from '../interfaces/quoteInterface'
+import { quoteInterface } from '../interfaces'
 
 export const quotes: quoteInterface[] = [
   {
