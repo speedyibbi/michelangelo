@@ -6,22 +6,13 @@ module.exports = {
   ],
   theme: {
     extend: {
-      keyframes: {
-        gridshift: {
-          '0%': {
-            transform: 'translateY(0%)'
-          },
-          '100%': {
-            transform: 'translateY(100%)'
-          }
-        }
-      },
-      animation: {
-        gridshift: 'gridshift 5s linear infinite'
+      transitionDelay: {
+        0: '0ms'
       },
       colors: {
         primary: '#00E676',
         secondary: '#00B0FF',
+        special: '#F50057',
         muted: '#757575'
       },
       fontFamily: {
@@ -30,7 +21,8 @@ module.exports = {
       },
       backgroundImage: {
         main: 'linear-gradient(to right bottom, rgba(50, 50, 50, 0.9), rgba(0, 0, 0, 0.9)), url("../public/images/cover.jpg")',
-        gradient: 'linear-gradient(to right bottom, #414345, #232526)'
+        gradient: 'linear-gradient(to right bottom, #414345, #232526)',
+        gif: 'url("../public/images/naruto.gif")'
       }
     }
   },

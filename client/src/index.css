@@ -37,11 +37,18 @@
 
 .home-grid-custom {
     display: grid;
-    grid-template-rows: 0.15fr 1fr 0.15fr;
+    grid-template-rows: 0.15fr 1fr 0.20fr;
 }
 
 .text-shadow-custom {
     text-shadow: 5px 5px 5px var(--shadow-color);
+}
+.text-deep-shadow-custom {
+    text-shadow:
+    -1px -1px 10px var(--shadow-color),  
+    1px -1px 10px var(--shadow-color),
+    -1px 1px 10px var(--shadow-color),
+    1px 1px 10px var(--shadow-color);
 }
 .box-shadow-custom {
     box-shadow: 1px 1px 10px 1px var(--shadow-color);

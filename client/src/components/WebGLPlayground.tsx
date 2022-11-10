@@ -1,12 +1,12 @@
 /* eslint-disable react/no-unknown-property */
 import React, { ReactElement, useRef, useMemo, useCallback } from 'react'
 import * as THREE from 'three'
-import { useFrame, useLoader } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
 // @ts-expect-error
 import particle from '../utilities/particle.png'
 
-const WebGLPlayground = (props: { color: string }): ReactElement => {
+const WebGLCanvas = (props: { color: string }): ReactElement => {
   const particleImage: any = useLoader(THREE.TextureLoader, particle)
   const orbitControlsRef = useRef<any>(null)
   const bufferRef = useRef<any>(null)
@@ -80,6 +80,14 @@ const WebGLPlayground = (props: { color: string }): ReactElement => {
       </points>
       <ambientLight intensity={1} />
     </>
+  )
+}
+
+const WebGLPlayground = (): ReactElement => {
+  return (
+    <Canvas>
+      <WebGLCanvas color='#00E676' />
+    </Canvas>
   )
 }
 
