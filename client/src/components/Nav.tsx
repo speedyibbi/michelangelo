@@ -1,17 +1,55 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import { animated, useTransition } from 'react-spring'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import { ViewContext } from '../Views'
+import LoginForm from './LoginForm'
+import SignupForm from './SignupForm'
 
 const Nav = (): ReactElement => {
-  const [loggedIn, setLoggedIn] = useState(false)
+  const { user, setUser, setFlash } = useContext(ViewContext)
   const [loadForm, setLoadForm] = useState(false)
-  const [loginForm, setLoginForm] = useState(false)
-  const [signupForm, setSignupForm] = useState(false)
+  const [formType, setFormType] = useState(0)
+  const [transitioning, setTransitioning] = useState(false)
   const transition = useTransition(loadForm, {
-    from: { y: -500 },
+    from: { y: -250 },
     enter: { y: 0 },
-    leave: { y: -500 }
+    leave: { y: -250 }
   })
+
+  const formSet = (load = false, type = 0, delay = true): void => {
+    setLoadForm(load)
+    if (!load) type = 0
+    setTransitioning(true)
+    setTimeout(() => {
+      setFormType(type)
+      setTransitioning(false)
+    }, (delay ? 1000 : 0))
+  }
+
+  const signOut = async (): Promise<void> => {
+    const response = await fetch('/user/logout', { method: 'GET' })
+      .then(async (res) => await res.json())
+
+    if (response.successful === true) {
+      setFlash({ type: 'success', text: response.message })
+      setUser({})
+    } else {
+      setFlash({ type: 'error', text: response.message })
+    }
+  }
+
+  useEffect(() => {
+    const getUser = async (): Promise<void> => {
+      const user = await fetch('/user', { method: 'GET' })
+        .then(async (res) => await res.json())
+      if (user.email !== undefined && user.username !== undefined) {
+        setUser({ email: user.email, username: user.username })
+      }
+    }
+
+    void getUser()
+  }, [])
 
   return (
     <nav className='w-full h-full flex items-center font-caviar'>
@@ -20,48 +58,39 @@ const Nav = (): ReactElement => {
         <h2 className='font-squids text-primary text-2xl text-deep-shadow-custom'>
           michelangelo</h2>
       </a>
-      <div className='w-1/2 flex justify-center items-center'>
+      <div className='w-1/2 pr-10 flex justify-end items-center'>
         {transition((style, item) => item
-          ? (loginForm && !signupForm)
-              ? <animated.form style={style} onSubmit={ (event) => { event.preventDefault() } }
-            className='absolute'>
-              <input type='text' placeholder='username'
-              className='m-6 p-2 pl-5 text-white text-sm border-2 border-primary
-              rounded-full outline-none box-shadow-custom transition-all bg-transparent' />
-              <input type='password' placeholder='password'
-              className='m-6 p-2 pl-5 text-white text-sm border-2 border-primary
-              rounded-full outline-none box-shadow-custom transition-all bg-transparent' />
-              <button className='m-5 p-3 font-squids text-primary text-sm rounded-md
-              box-shadow-custom border-2 border-primary transition-all
-              hover:text-stone-800 hover:bg-primary hover:scale-110'>Log In</button>
-            </animated.form>
-              : (!loginForm && signupForm)
-                  ? <animated.form style={style} onSubmit={ (event) => { event.preventDefault() } }
-              className='absolute'>
-                <input type='text' placeholder='username'
-                className='m-6 p-2 pl-5 text-white text-sm border-2 border-primary
-                rounded-full outline-none box-shadow-custom transition-all bg-transparent' />
-                <input type='password' placeholder='password'
-                className='m-6 p-2 pl-5 text-white text-sm border-2 border-primary
-                rounded-full outline-none box-shadow-custom transition-all bg-transparent' />
-                <button className='m-5 p-3 font-squids text-primary text-sm rounded-md
-                box-shadow-custom border-2 border-primary transition-all
-                hover:text-stone-800 hover:bg-primary hover:scale-110'>Sign Up</button>
-              </animated.form>
-                  : 'error'
+          ? <animated.div style={style} className='absolute'>
+            {(formType === 1)
+              ? <div className='flex justify-evenly'>
+                  <LoginForm onSuccess={() => { formSet() }} />
+                  <button onClick={() => { formSet() } }>
+                  <FontAwesomeIcon icon={faArrowUp}
+                    className='ml-2 text-primary text-xl transition-all hover:scale-110' /></button>
+                </div>
+              : (formType === 2)
+                  ? <div className='flex justify-evenly'>
+                      <SignupForm onSuccess={() => { formSet() }} />
+                      <button onClick={() => { formSet() } }>
+                      <FontAwesomeIcon icon={faArrowUp}
+                        className='ml-2 text-primary text-xl transition-all hover:scale-110' /></button>
+                    </div>
+                  : ''}
+            </animated.div>
           : <animated.div style={style} className='absolute'>
-          {!loggedIn
-            ? <><button onClick={() => { setLoadForm(true); setLoginForm(true); setSignupForm(false) }}
-              className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
-              rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
-              Log In</button>
-              <button onClick={() => { setLoadForm(true); setLoginForm(false); setSignupForm(true) }}
-              className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
-              rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
-              Sign Up</button></>
-            : <><button className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
-              rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
-              Sign Out</button></>}
+          {user.email === undefined && user.username === undefined
+            ? <><button disabled={transitioning} onClick={() => { formSet(true, 1, false) }}
+                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
+                Log In</button>
+                <button disabled={transitioning} onClick={() => { formSet(true, 2, false) }}
+                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
+                Sign Up</button></>
+            : <><button onClick={() => { void signOut() }}
+                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
+                Sign Out</button></>}
             </animated.div>
         )}
       </div>

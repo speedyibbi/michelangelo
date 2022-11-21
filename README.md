@@ -1,7 +1,6 @@
 # michelangelo
 
-Video game info website based on the
-[IGDB](https://www.igdb.com/api) database api.
+Holds WebGL games for play/testing/marketing.
 
 Client: React Application
 
