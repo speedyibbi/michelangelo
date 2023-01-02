@@ -1,4 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { animated, useTransition } from 'react-spring'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
@@ -53,11 +54,11 @@ const Nav = (): ReactElement => {
 
   return (
     <nav className='w-full h-full flex items-center font-caviar'>
-      <a href="" className='w-1/2 flex justify-center'>
+      <Link to='/' className='w-1/2 flex justify-center'>
         <img src="/images/favicon.png" alt="" className='w-7 mx-3 my-auto image-shadow-custom'/>
         <h2 className='font-squids text-primary text-2xl text-deep-shadow-custom'>
           michelangelo</h2>
-      </a>
+      </Link>
       <div className='w-1/2 pr-10 flex justify-end items-center'>
         {transition((style, item) => item
           ? <animated.div style={style} className='absolute'>
@@ -87,7 +88,11 @@ const Nav = (): ReactElement => {
                 className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Sign Up</button></>
-            : <><button onClick={() => { void signOut() }}
+            : <><Link to='/upload'
+                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
+                Upload Game</Link>
+                <button onClick={() => { void signOut() }}
                 className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Sign Out</button></>}

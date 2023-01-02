@@ -4,8 +4,9 @@ import mongoose from 'mongoose'
 import session from 'express-session'
 import passport from 'passport'
 import passportLocal from 'passport-local'
-import userModel from './user/userModel'
-import userRoutes from './user/userRoutes'
+import userModel from './models/userModel'
+import userRoutes from './routes/userRoutes'
+import gameRoutes from './routes/gameRoutes'
 import ExpressError from './utilities/expressError'
 
 if (process.env.NODE_ENV !== 'production') {
@@ -21,7 +22,6 @@ void mongoose.connect(dbUrl)
 mongoose.connection.on('error', console.error.bind(console, '\x1b[1;31m', 'Connection Error: '))
 mongoose.connection.once('open', () => console.log('\x1b[1;32m', 'Connected to Database'))
 
-app.use(express.json())
 app.use(express.static(path.join(__dirname, '../../client', 'build')))
 app.use(session({
   secret: process.env.SESSION_SECRET ?? 'secret',
@@ -45,6 +45,7 @@ app.get('/', (_req: Request, res: Response) => {
 })
 
 app.use('/user/', userRoutes)
+app.use('/game/', gameRoutes)
 
 app.all('*', (_req: Request, _res: Response, next: NextFunction) => {
   next(new ExpressError('Page not found', 404))

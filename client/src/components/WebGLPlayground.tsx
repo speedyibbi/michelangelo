@@ -18,7 +18,7 @@ const WebGLCanvas = (props: { color: string }): ReactElement => {
   const amplitude = 3
 
   const graph = useCallback((x: number, z: number) => {
-    return Math.sin(0.001 * ((x ** 2) + (z ** 2) + phase)) * amplitude
+    return Math.sin(0.0005 * ((x ** 2) + (z ** 2) + phase)) * amplitude
   }, [phase, amplitude])
 
   const positions = useMemo(() => {
