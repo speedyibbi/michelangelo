@@ -88,7 +88,7 @@ const Nav = (): ReactElement => {
                 className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Sign Up</button></>
-            : <><Link to='/upload'
+            : <><Link to='/game/new'
                 className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Upload Game</Link>

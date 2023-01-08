@@ -15,6 +15,7 @@
 * {
     --primary-color: #00E676;
     --shadow-color: #171717;
+    --text-glow-color: #00B0FF;
 }
 
 ::selection {
@@ -112,3 +113,21 @@
       opacity: 1;
     }
 }
+
+.glowingText {
+    animation: textGlow 2s ease-in-out infinite;
+}
+@keyframes textGlow {
+    0% {
+      text-shadow: 0 0 1px var(--text-glow-color), 0 0 2px var(--text-glow-color),
+      0 0 3px var(--text-glow-color), 0 0 4px var(--text-glow-color), 0 0 5px var(--text-glow-color);
+    }
+    50% {
+        text-shadow: 0 0 3px var(--text-glow-color), 0 0 4px var(--text-glow-color),
+        0 0 5px var(--text-glow-color), 0 0 5px var(--text-glow-color), 0 0 6px var(--text-glow-color);
+    }
+    100% {
+        text-shadow: 0 0 1px var(--text-glow-color), 0 0 2px var(--text-glow-color),
+        0 0 3px var(--text-glow-color), 0 0 4px var(--text-glow-color), 0 0 5px var(--text-glow-color);
+      }
+  }

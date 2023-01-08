@@ -1,6 +1,7 @@
 import express from 'express'
+import path from 'path'
 import multer from 'multer'
-import { UploadGame } from '../controllers/gameController'
+import { UploadGame, GetGame, GetImage, GetInfo } from '../controllers/gameController'
 import { isLoggedIn } from '../utilities/middleware'
 import AsyncCatcher from '../utilities/asyncCatcher'
 // eslint-disable-next-line new-cap
@@ -11,16 +12,24 @@ const storage = multer.diskStorage({
     if (file.fieldname === 'game') callback(null, 'games')
     else if (file.fieldname === 'image') callback(null, 'images')
   },
-  filename: (req, _file, callback) => {
-    callback(null, req.body.title)
+  filename: (req, file, callback) => {
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    callback(null, req.body.title + path.parse(file.originalname).ext)
   }
 })
 
 const upload = multer({ storage })
 
 router.route('/')
+  .get(AsyncCatcher(GetGame))
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   .post(isLoggedIn, upload.fields([{ name: 'game', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
     AsyncCatcher(UploadGame))
+
+router.route('/image')
+  .get(GetImage)
+
+router.route('/info')
+  .get(AsyncCatcher(GetInfo))
 
 export default router

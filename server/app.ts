@@ -22,7 +22,7 @@ void mongoose.connect(dbUrl)
 mongoose.connection.on('error', console.error.bind(console, '\x1b[1;31m', 'Connection Error: '))
 mongoose.connection.once('open', () => console.log('\x1b[1;32m', 'Connected to Database'))
 
-app.use(express.static(path.join(__dirname, '../../client', 'build')))
+app.use(express.static(path.join(__dirname, '../../client/build')))
 app.use(session({
   secret: process.env.SESSION_SECRET ?? 'secret',
   resave: false,
@@ -52,8 +52,8 @@ app.all('*', (_req: Request, _res: Response, next: NextFunction) => {
 })
 
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  if (err.message === null) err.message = 'Something went wrong'
-  if (err.status === null) err.status = 500
+  if (err.message === undefined || err.message === null) err.message = 'Something went wrong'
+  if (err.message === undefined || err.status === null) err.status = 500
   res.status(err.status).send(err.message)
 })
 
