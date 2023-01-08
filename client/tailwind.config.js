@@ -23,6 +23,9 @@ module.exports = {
         main: 'linear-gradient(to right bottom, rgba(50, 50, 50, 0.9), rgba(0, 0, 0, 0.9)), url("../public/images/cover.jpg")',
         gradient: 'linear-gradient(to right bottom, #414345, #232526)',
         gif: 'url("../public/images/naruto.gif")'
+      },
+      gridAutoRows: {
+        13: '13rem'
       }
     }
   },

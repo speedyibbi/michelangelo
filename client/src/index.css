@@ -14,8 +14,9 @@
 
 * {
     --primary-color: #00E676;
+    --secondary-color: #00B0FF;
+    --special-color: #F50057;
     --shadow-color: #171717;
-    --text-glow-color: #00B0FF;
 }
 
 ::selection {
@@ -114,20 +115,54 @@
     }
 }
 
-.glowingText {
-    animation: textGlow 2s ease-in-out infinite;
+.glowingText-primary {
+    animation: textGlowPrimary 2s ease-in-out infinite;
 }
-@keyframes textGlow {
+.glowingText-secondary {
+    animation: textGlowSecondary 2s ease-in-out infinite;
+}
+.glowingText-special {
+    animation: textGlowSpecial 2s ease-in-out infinite;
+}
+@keyframes textGlowPrimary {
     0% {
-      text-shadow: 0 0 1px var(--text-glow-color), 0 0 2px var(--text-glow-color),
-      0 0 3px var(--text-glow-color), 0 0 4px var(--text-glow-color), 0 0 5px var(--text-glow-color);
+      text-shadow: 0 0 1px var(--primary-color), 0 0 2px var(--primary-color),
+      0 0 3px var(--primary-color), 0 0 4px var(--primary-color);
     }
     50% {
-        text-shadow: 0 0 3px var(--text-glow-color), 0 0 4px var(--text-glow-color),
-        0 0 5px var(--text-glow-color), 0 0 5px var(--text-glow-color), 0 0 6px var(--text-glow-color);
+        text-shadow: 0 0 3px var(--primary-color), 0 0 4px var(--primary-color),
+        0 0 5px var(--primary-color), 0 0 5px var(--primary-color);
     }
     100% {
-        text-shadow: 0 0 1px var(--text-glow-color), 0 0 2px var(--text-glow-color),
-        0 0 3px var(--text-glow-color), 0 0 4px var(--text-glow-color), 0 0 5px var(--text-glow-color);
+        text-shadow: 0 0 1px var(--primary-color), 0 0 2px var(--primary-color),
+        0 0 3px var(--primary-color), 0 0 4px var(--primary-color);
       }
-  }
+}
+@keyframes textGlowSecondary {
+    0% {
+      text-shadow: 0 0 1px var(--secondary-color), 0 0 2px var(--secondary-color),
+      0 0 3px var(--secondary-color), 0 0 4px var(--secondary-color);
+    }
+    50% {
+        text-shadow: 0 0 3px var(--secondary-color), 0 0 4px var(--secondary-color),
+        0 0 5px var(--secondary-color), 0 0 5px var(--secondary-color);
+    }
+    100% {
+        text-shadow: 0 0 1px var(--secondary-color), 0 0 2px var(--secondary-color),
+        0 0 3px var(--secondary-color), 0 0 4px var(--secondary-color);
+      }
+}
+@keyframes textGlowSpecial {
+    0% {
+      text-shadow: 0 0 1px var(--special-color), 0 0 2px var(--special-color),
+      0 0 3px var(--special-color), 0 0 4px var(--special-color);
+    }
+    50% {
+        text-shadow: 0 0 3px var(--special-color), 0 0 4px var(--special-color),
+        0 0 5px var(--special-color), 0 0 5px var(--special-color);
+    }
+    100% {
+        text-shadow: 0 0 1px var(--special-color), 0 0 2px var(--special-color),
+        0 0 3px var(--special-color), 0 0 4px var(--special-color);
+      }
+}

@@ -26,6 +26,20 @@ export const UploadGame = async (req: Request, res: Response): Promise<Response>
   return res.send(JSON.stringify(response))
 }
 
+export const GetGames = async (req: Request, res: Response): Promise<Response> => {
+  let { offset, limit }: { limit?: string, offset?: string } = req.query
+  if (offset === undefined) offset = '0'
+  if (limit === undefined) limit = '100'
+  if (parseInt(offset) < 0) offset = '0'
+  if (parseInt(limit) < 0 || parseInt(limit) > 100) limit = '100'
+  const games: Array<{ title?: string, description?: string }> = []
+  const result = await gameModel.find({}).skip(parseInt(offset)).limit(parseInt(limit))
+  result.forEach(game => {
+    games.push({ title: game.title, description: game.description })
+  })
+  return res.send(JSON.stringify(games))
+}
+
 export const GetGame = async (req: Request, res: Response): Promise<any> => {
   clearBuild()
   const games: string[] = []

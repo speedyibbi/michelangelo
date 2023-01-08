@@ -34,7 +34,7 @@ const Views = (): ReactElement => {
   return (
     <>
       <ViewContext.Provider value={{ user, setUser, setFlash }}>
-        <div className='w-full h-full absolute grid-custom overflow-hidden'>
+        <div className='w-full h-full absolute grid-custom overflow-x-hidden'>
           <animated.span style={navbarSpring}><Nav /></animated.span>
           {routeSpring((styles, item) => (
             <animated.div style={styles}>

@@ -7,13 +7,12 @@ const Home = (): ReactElement => {
   const [game, setGame] = useState<string>('')
   const [quote, setQuote] = useState<quoteInterface>()
 
-  const getGame = async (): Promise<void> => {
-    const game = await fetch('/game/info', { method: 'GET' })
-      .then(async (res) => await res.json())
-    setGame(game.title)
-  }
-
   useEffect(() => {
+    const getGame = async (): Promise<void> => {
+      const game = await fetch('/game/info', { method: 'GET' })
+        .then(async (res) => await res.json())
+      setGame(game.title)
+    }
     void getGame()
     setQuote(quotes[Math.floor(Math.random() * quotes.length)])
   }, [])
@@ -25,8 +24,8 @@ const Home = (): ReactElement => {
         <div className='group h-4/6 mx-16 mb-7 relative border-2 bg-neutral-900 rounded-sm overflow-hidden'>
           <Link to={`/game/${game}`}
           className='w-full h-full p-6 absolute flex items-end bg-neutral-900 bg-opacity-30 z-10'>
-            <p className='font-caviar text-white text-4xl text-shadow-custom glowingText'>
-              {game}</p>
+            <p className='font-caviar text-special text-4xl text-shadow-custom glowingText-special'>
+              Featured</p>
           </Link>
           <img src={game !== '' ? `/game/image?title=${game}` : ''} alt=''
           className='group-hover:scale-125 w-full h-full transition-all z-0' />
