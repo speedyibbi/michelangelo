@@ -20,7 +20,7 @@ const Home = (): ReactElement => {
   return (
     <article className='h-full grid grid-cols-2 overflow-hidden'>
       <div className='h-full flex flex-col justify-center'>
-        <div className='h-2/6 bg-contain bg-center bg-gif bg-no-repeat' />
+        <div className='h-2/6 bg-contain bg-center bg-gif_home bg-no-repeat' />
         <div className='group h-4/6 mx-16 mb-7 relative border-2 bg-neutral-900 rounded-sm overflow-hidden'>
           <Link to={`/game/${game}`}
           className='w-full h-full p-6 absolute flex items-end bg-neutral-900 bg-opacity-30 z-10'>

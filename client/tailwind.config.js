@@ -22,7 +22,9 @@ module.exports = {
       backgroundImage: {
         main: 'linear-gradient(to right bottom, rgba(50, 50, 50, 0.9), rgba(0, 0, 0, 0.9)), url("../public/images/cover.jpg")',
         gradient: 'linear-gradient(to right bottom, #414345, #232526)',
-        gif: 'url("../public/images/naruto.gif")'
+        gif_home: 'url("../public/images/naruto.gif")',
+        gif_game_1: 'url("../public/images/sonic_1.gif")',
+        gif_game_2: 'url("../public/images/sonic_2.gif")'
       },
       gridAutoRows: {
         13: '13rem'

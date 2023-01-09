@@ -24,11 +24,15 @@ const Game = (): ReactElement => {
   return (
     <div className='w-11/12 h-full m-auto relative flex justify-between items-center'>
       <div className='w-1/3 h-5/6'>
-        <button onClick={goBack} className='my-3 flex items-center
-        font-squids text-white text-xl text-deep-shadow-custom box-shadow-custom
-        border-2 border-white rounded-md transition-all hover:text-secondary hover:border-secondary'>
-          <FontAwesomeIcon icon={faChevronLeft} className='ml-3' />
-          <p className='m-3'>return</p></button>
+        <div className='w-full h-1/6 flex justify-start items-center'>
+          <button onClick={goBack} className='my-3 flex items-center
+          font-squids text-white text-xl text-deep-shadow-custom box-shadow-custom
+          border-2 border-white rounded-md transition-all hover:text-secondary hover:border-secondary'>
+            <FontAwesomeIcon icon={faChevronLeft} className='ml-3' />
+            <p className='m-3'>return</p></button>
+          <div className={`w-full h-full bg-contain bg-center
+          bg-gif_game_${Math.floor(Math.random() * 2) + 1} bg-no-repeat`} />
+        </div>
         <div className='w-full h-5/6 py-4 flex flex-col justify-between items-start
         font-caviar text-secondary text-xl text-shadow-custom
         border-2 border-white rounded-sm bg-neutral-900 box-shadow-custom'>
