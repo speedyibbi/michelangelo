@@ -7,7 +7,8 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 const Game = (): ReactElement => {
   const { title } = useParams()
   const navigate = useNavigate()
-  const [game, setGame] = useState<{ title?: string, description?: string, creator?: string }>({})
+  const [game, setGame] =
+  useState<{ successful?: boolean, title?: string, description?: string, creator?: string }>({})
 
   const goBack = (): void => {
     navigate(-1)
@@ -15,8 +16,9 @@ const Game = (): ReactElement => {
 
   useEffect(() => {
     const getGame = async (): Promise<void> => {
-      setGame(await fetch(`/game/info?title=${title !== undefined ? title : ''}`, { method: 'GET' })
-        .then(async (res) => await res.json()))
+      const response = await fetch(`/game/info?title=${title !== undefined ? title : ''}`, { method: 'GET' })
+        .then(async (res) => await res.json())
+      response.successful === true ? setGame(response) : navigate('/')
     }
     void getGame()
   }, [])
@@ -30,8 +32,8 @@ const Game = (): ReactElement => {
           border-2 border-white rounded-md transition-all hover:text-secondary hover:border-secondary'>
             <FontAwesomeIcon icon={faChevronLeft} className='ml-3' />
             <p className='m-3'>return</p></button>
-          <div className={`w-full h-full bg-contain bg-center
-          bg-gif_game_${Math.floor(Math.random() * 2) + 1} bg-no-repeat`} />
+          <div className='w-full h-full bg-contain bg-center
+          bg-gif_game_2 bg-no-repeat' />
         </div>
         <div className='w-full h-5/6 py-4 flex flex-col justify-between items-start
         font-caviar text-secondary text-xl text-shadow-custom

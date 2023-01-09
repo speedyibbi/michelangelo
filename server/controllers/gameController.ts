@@ -111,9 +111,10 @@ export const GetInfo = async (req: Request, res: Response): Promise<Response> =>
       game = await gameModel.findOne({ title: req.query.title }).populate('creator')
     }
   }
+  if (game === null) return res.send(JSON.stringify({ successful: false }))
   const { title, description, creator }:
   { title: string, description: string, creator: { email: string, username: string } } = game
-  return res.send(JSON.stringify({ title, description, creator: creator.username }))
+  return res.send(JSON.stringify({ successful: true, title, description, creator: creator.username }))
 }
 
 const getFiles = (directory: string): string[] => {
