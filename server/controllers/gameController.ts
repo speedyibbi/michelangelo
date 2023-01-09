@@ -105,13 +105,15 @@ export const GetInfo = async (req: Request, res: Response): Promise<Response> =>
   let game
   if (req.query.title === undefined) {
     game = (await gameModel.aggregate([{ $sample: { size: 1 } }]))[0]
+    await userModel.populate(game, { path: 'creator' })
   } else {
     if (typeof req.query.title === 'string') {
-      game = await gameModel.findOne({ title: req.query.title })
+      game = await gameModel.findOne({ title: req.query.title }).populate('creator')
     }
   }
-  const { title, description }: { title: string, description: string } = game
-  return res.send(JSON.stringify({ title, description }))
+  const { title, description, creator }:
+  { title: string, description: string, creator: { email: string, username: string } } = game
+  return res.send(JSON.stringify({ title, description, creator: creator.username }))
 }
 
 const getFiles = (directory: string): string[] => {

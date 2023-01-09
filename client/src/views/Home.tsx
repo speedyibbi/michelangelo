@@ -24,7 +24,8 @@ const Home = (): ReactElement => {
         <div className='group h-4/6 mx-16 mb-7 relative border-2 bg-neutral-900 rounded-sm overflow-hidden'>
           <Link to={`/game/${game}`}
           className='w-full h-full p-6 absolute flex items-end bg-neutral-900 bg-opacity-30 z-10'>
-            <p className='font-caviar text-special text-4xl text-shadow-custom glowingText-special'>
+            <p className='font-caviar text-special text-4xl text-shadow-custom glowingText-special
+            box-shadow-custom'>
               Featured</p>
           </Link>
           <img src={game !== '' ? `/game/image?title=${game}` : ''} alt=''
