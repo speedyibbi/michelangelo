@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import path from 'path'
-import { existsSync, readdirSync, rmSync, renameSync } from 'fs'
+// import { existsSync, readdirSync, rmSync, renameSync } from 'fs'
+import { readdirSync } from 'fs'
 import { Error } from 'mongoose'
-import decompress from 'decompress'
+// import decompress from 'decompress'
 import gameModel from '../models/gameModel'
 import userModel from '../models/userModel'
 
@@ -40,44 +41,25 @@ export const GetGames = async (req: Request, res: Response): Promise<Response> =
   return res.send(JSON.stringify(games))
 }
 
-export const GetGame = async (req: Request, res: Response): Promise<any> => {
-  clearBuild()
+export const GetGame = (req: Request, res: Response): void => {
   const games: string[] = []
   readdirSync(path.join(__dirname, '../../games')).forEach(file => { games.push(file) })
   if (req.query.title === undefined) {
-    const response = { successful: false, message: 'Game not specified' }
-    return res.send(JSON.stringify(response))
-  }
-  let index = -1
-  for (let i = 0; i < games.length; i++) {
-    if (path.parse(games[i]).name === req.query.title) {
-      index = i
-      break
+    return res.sendFile('')
+  } else {
+    let index = -1
+    for (let i = 0; i < games.length; i++) {
+      if (path.parse(games[i]).name === req.query.title) {
+        index = i
+        break
+      }
+    }
+    if (index === -1) {
+      return res.sendFile('')
+    } else {
+      return res.sendFile(path.join(__dirname, '../../games', games[index]))
     }
   }
-  if (index === -1) {
-    const response = { successful: false, message: 'Game could not be found' }
-    return res.send(JSON.stringify(response))
-  }
-  const response = await decompress(path.join(__dirname, '../../games', games[index]), 'build')
-    .then(() => {
-      let files: string[] = []
-      getFiles('build').forEach(file => {
-        if (file.includes('/Build/')) {
-          const newPath =
-              file.substring(0, file.indexOf('/Build/') + 7) + 'game' + file.slice(file.indexOf('.'))
-          renameSync(file, newPath)
-          files = [...files, newPath]
-        }
-      })
-      res.sendFile(path.join(__dirname, '../..', files[0]))
-      return { successful: true, message: 'Game found' }
-    })
-    .catch(() => {
-      return { successful: false, message: 'Sever error' }
-    })
-  clearBuild()
-  if (!response.successful) return res.send(JSON.stringify(response))
 }
 
 export const GetImage = (req: Request, res: Response): void => {
@@ -117,21 +99,59 @@ export const GetInfo = async (req: Request, res: Response): Promise<Response> =>
   return res.send(JSON.stringify({ successful: true, title, description, creator: creator.username }))
 }
 
-const getFiles = (directory: string): string[] => {
-  let files: string[] = []
-  const items = readdirSync(directory, { withFileTypes: true })
-  for (const item of items) {
-    if (item.isDirectory()) {
-      files = [...files, ...getFiles(`${directory}/${item.name}`)]
-    } else {
-      files.push(`${directory}/${item.name}`)
-    }
-  }
-  return files
-}
+// const getFiles = (directory: string): string[] => {
+//   let files: string[] = []
+//   const items = readdirSync(directory, { withFileTypes: true })
+//   for (const item of items) {
+//     if (item.isDirectory()) {
+//       files = [...files, ...getFiles(`${directory}/${item.name}`)]
+//     } else {
+//       files.push(`${directory}/${item.name}`)
+//     }
+//   }
+//   return files
+// }
 
-const clearBuild = (): void => {
-  if (existsSync(path.join(__dirname, '../../build'))) {
-    rmSync(path.join(__dirname, '../../build'), { recursive: true })
-  }
-}
+// const clearBuild = (): void => {
+//   if (existsSync(path.join(__dirname, '../../build'))) {
+//     rmSync(path.join(__dirname, '../../build'), { recursive: true })
+//   }
+// }
+
+// clearBuild()
+// const games: string[] = []
+// readdirSync(path.join(__dirname, '../../games')).forEach(file => { games.push(file) })
+// if (req.query.title === undefined) {
+//   const response = { successful: false, message: 'Game not specified' }
+//   return res.send(JSON.stringify(response))
+// }
+// let index = -1
+// for (let i = 0; i < games.length; i++) {
+//   if (path.parse(games[i]).name === req.query.title) {
+//     index = i
+//     break
+//   }
+// }
+// if (index === -1) {
+//   const response = { successful: false, message: 'Game could not be found' }
+//   return res.send(JSON.stringify(response))
+// }
+// const response = await decompress(path.join(__dirname, '../../games', games[index]), 'build')
+//   .then(() => {
+//     let files: string[] = []
+//     getFiles('build').forEach(file => {
+//       if (file.includes('/Build/')) {
+//         const newPath =
+//             file.substring(0, file.indexOf('/Build/') + 7) + 'game' + file.slice(file.indexOf('.'))
+//         renameSync(file, newPath)
+//         files = [...files, newPath]
+//       }
+//     })
+//     res.sendFile(path.join(__dirname, '../..', files[0]))
+//     return { successful: true, message: 'Game found' }
+//   })
+//   .catch(() => {
+//     return { successful: false, message: 'Sever error' }
+//   })
+// clearBuild()
+// if (!response.successful) return res.send(JSON.stringify(response))

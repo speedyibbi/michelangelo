@@ -1,7 +1,7 @@
 import express from 'express'
 import path from 'path'
 import multer from 'multer'
-import { UploadGame, GetGames, GetImage, GetInfo } from '../controllers/gameController'
+import { UploadGame, GetGames, GetGame, GetImage, GetInfo } from '../controllers/gameController'
 import { isLoggedIn } from '../utilities/middleware'
 import AsyncCatcher from '../utilities/asyncCatcher'
 // eslint-disable-next-line new-cap
@@ -26,10 +26,13 @@ router.route('/')
   .post(isLoggedIn, upload.fields([{ name: 'game', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
     AsyncCatcher(UploadGame))
 
+router.route('/info')
+  .get(AsyncCatcher(GetInfo))
+
 router.route('/image')
   .get(GetImage)
 
-router.route('/info')
-  .get(AsyncCatcher(GetInfo))
+router.route('/file')
+  .get(GetGame)
 
 export default router
