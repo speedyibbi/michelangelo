@@ -7,8 +7,8 @@ const Explore = (): ReactElement => {
 
   const getGames = async (offset: number, limit: number): Promise<void> => {
     setGames(await fetch(`/game?offset=${offset}&limit=${limit}`, { method: 'GET' })
-      .then(async (res) => await res.json())
-      .catch(() => [...games]))
+      .then(async (res) => await res.json()).catch(() => [...games]))
+    console.log(games)
   }
 
   useEffect(() => { void getGames(0, 100) }, [])

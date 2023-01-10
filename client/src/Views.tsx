@@ -41,7 +41,7 @@ const Views = (): ReactElement => {
               <Routes location={item}>
                 <Route path='/' element={ <Home /> } />
                 <Route path='/explore' element={ <Explore /> } />
-                <Route path='/game/new' element={ <GameForm /> } />
+                <Route path='/upload' element={ <GameForm /> } />
                 <Route path='/game/:title' element={ <Game /> } />
                 <Route path='*' element={
                 <h1 className='h-full flex justify-center items-center
