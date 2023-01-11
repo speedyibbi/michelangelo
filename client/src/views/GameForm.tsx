@@ -20,7 +20,6 @@ const GameForm = (): ReactElement => {
   useForm<Inputs>({ defaultValues: { title: '', description: '', game: null, image: null } })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(dirtyFields)
     const formData = new FormData()
     formData.append('title', data.title)
     formData.append('description', data.description)

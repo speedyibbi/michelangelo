@@ -5,7 +5,6 @@ import session from 'express-session'
 import passport from 'passport'
 import passportLocal from 'passport-local'
 import mongoSanitize from 'express-mongo-sanitize'
-import mongoStore from 'connect-mongo'
 import userModel from './models/userModel'
 import userRoutes from './routes/userRoutes'
 import gameRoutes from './routes/gameRoutes'
@@ -27,13 +26,13 @@ mongoose.connection.once('open', () => console.log('\x1b[1;32m', 'Connected to D
 app.use(express.static(path.join(__dirname, '../../client/build')))
 app.use(mongoSanitize())
 app.use(session({
-  store: mongoStore.create({
-    mongoUrl: dbUrl,
-    touchAfter: (60 * 60 * 24),
-    crypto: {
-      secret: process.env.SECRET ?? 'secret'
-    }
-  }).on('error', (error) => console.log('\x1b[1;31m', 'Session store error', error)),
+  // store: mongoStore.create({
+  //   mongoUrl: dbUrl,
+  //   touchAfter: (60 * 60 * 24),
+  //   crypto: {
+  //     secret: process.env.SECRET ?? 'secret'
+  //   }
+  // }).on('error', (error) => console.log('\x1b[1;31m', 'Session store error', error)),
   name: 'mikey_',
   secret: process.env.SECRET ?? 'secret',
   resave: false,
