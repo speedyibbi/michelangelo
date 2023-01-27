@@ -29,7 +29,7 @@ const Nav = (): ReactElement => {
   }
 
   const signOut = async (): Promise<void> => {
-    const response = await fetch('/user/logout', { method: 'GET' })
+    const response = await fetch('/users/logout', { method: 'GET' })
       .then(async (res) => await res.json())
 
     if (response.successful === true) {
@@ -42,7 +42,7 @@ const Nav = (): ReactElement => {
 
   useEffect(() => {
     const getUser = async (): Promise<void> => {
-      const user = await fetch('/user', { method: 'GET' })
+      const user = await fetch('/users', { method: 'GET' })
         .then(async (res) => await res.json())
       if (user.email !== undefined && user.username !== undefined) {
         setUser({ email: user.email, username: user.username })
@@ -88,7 +88,7 @@ const Nav = (): ReactElement => {
                 className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Sign Up</button></>
-            : <><Link to='/upload'
+            : <><Link to='/games/new'
                 className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Upload Game</Link>

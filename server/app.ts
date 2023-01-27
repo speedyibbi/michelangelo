@@ -5,6 +5,7 @@ import session from 'express-session'
 import passport from 'passport'
 import passportLocal from 'passport-local'
 import mongoSanitize from 'express-mongo-sanitize'
+import mongoStore from 'connect-mongo'
 import userModel from './models/userModel'
 import userRoutes from './routes/userRoutes'
 import gameRoutes from './routes/gameRoutes'
@@ -16,7 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const app = express()
-const port = process.env.PORT
+const port = process.env.PORT ?? 5000
 const dbUrl = process.env.DB_URL ?? 'mongodb://localhost:27017/michelangelo'
 
 void mongoose.connect(dbUrl)
@@ -26,13 +27,13 @@ mongoose.connection.once('open', () => console.log('\x1b[1;32m', 'Connected to D
 app.use(express.static(path.join(__dirname, '../../client/build')))
 app.use(mongoSanitize())
 app.use(session({
-  // store: mongoStore.create({
-  //   mongoUrl: dbUrl,
-  //   touchAfter: (60 * 60 * 24),
-  //   crypto: {
-  //     secret: process.env.SECRET ?? 'secret'
-  //   }
-  // }).on('error', (error) => console.log('\x1b[1;31m', 'Session store error', error)),
+  store: mongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: (60 * 60 * 24),
+    crypto: {
+      secret: process.env.SECRET ?? 'secret'
+    }
+  }).on('error', (error) => console.log('\x1b[1;31m', 'Session store error', error)),
   name: 'mikey_',
   secret: process.env.SECRET ?? 'secret',
   resave: false,
@@ -54,8 +55,8 @@ app.get('/', (_req: Request, res: Response) => {
   res.sendFile('index.html')
 })
 
-app.use('/user/', userRoutes)
-app.use('/game/', gameRoutes)
+app.use('/users/', userRoutes)
+app.use('/games/', gameRoutes)
 
 app.all('*', (_req: Request, _res: Response, next: NextFunction) => {
   next(new ExpressError('Page not found', 404))
@@ -64,6 +65,7 @@ app.all('*', (_req: Request, _res: Response, next: NextFunction) => {
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   if (err.message === undefined || err.message === null) err.message = 'Something went wrong'
   if (err.message === undefined || err.status === null) err.status = 500
+  console.log(err.message)
   res.status(err.status).send(err.message)
 })
 

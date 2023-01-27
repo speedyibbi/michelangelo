@@ -29,7 +29,7 @@ const GameForm = (): ReactElement => {
   }
 
   const upload = async (data: FormData): Promise<void> => {
-    const response = await fetch('/game/', {
+    const response = await fetch('/games/', {
       method: 'POST',
       body: data
     }).then(async (res) => await res.json())

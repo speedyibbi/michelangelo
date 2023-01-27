@@ -1,26 +1,32 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import UnityEngine from '../components/UnityEngine'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
+import { ViewContext } from '../Views'
 
 const Game = (): ReactElement => {
-  const { title } = useParams()
   const navigate = useNavigate()
+  const { title } = useParams()
+  const { setFlash } = useContext(ViewContext)
   const [game, setGame] =
-  useState<{ successful?: boolean, title?: string, description?: string, creator?: string }>({})
+  useState<{ title?: string, description?: string, creator?: string }>({})
 
   const goBack = (): void => {
     navigate(-1)
   }
 
   useEffect(() => {
-    const getGame = async (): Promise<void> => {
-      const response = await fetch(`/game/info?title=${title !== undefined ? title : ''}`, { method: 'GET' })
+    const getGameInfo = async (): Promise<void> => {
+      await fetch(`/games/info?title=${title !== undefined ? title : ''}`, { method: 'GET' })
         .then(async (res) => await res.json())
-      response.successful === true ? setGame(response) : navigate('/')
+        .then((response) => setGame(response))
+        .catch(() => {
+          navigate('/')
+          setFlash({ type: 'error', text: 'Could not find game' })
+        })
     }
-    void getGame()
+    void getGameInfo()
   }, [])
 
   return (
@@ -49,7 +55,7 @@ const Game = (): ReactElement => {
       </div>
       <div className='w-7/12 aspect-video relative border-2 bg-neutral-900
       rounded-sm overflow-hidden box-shadow-custom'>
-          <UnityEngine />
+          <UnityEngine title={(title !== undefined && title !== null) ? title : ''} />
       </div>
     </div>
   )

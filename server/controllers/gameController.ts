@@ -1,14 +1,45 @@
 import { Request, Response } from 'express'
 import path from 'path'
-// import { existsSync, readdirSync, rmSync, renameSync } from 'fs'
-import { readdirSync } from 'fs'
-import { Error } from 'mongoose'
-// import decompress from 'decompress'
+import { access, readdir, rename, rm, unlink } from 'fs/promises'
+import decompress from 'decompress'
 import gameModel from '../models/gameModel'
 import userModel from '../models/userModel'
 
+const TestFileName = (input: string): boolean => {
+  const dataRegex = /.*\.data/i
+  const frameworkRegex = /.*\.framework\.js/i
+  const loaderRegex = /.*\.loader\.js/i
+  const wasmRegex = /.*\.wasm/i
+  return (dataRegex.test(input) || frameworkRegex.test(input) ||
+  loaderRegex.test(input) || wasmRegex.test(input))
+}
+
 export const UploadGame = async (req: Request, res: Response): Promise<Response> => {
   const { title, description }: { title: string, description: string } = req.body
+  // @ts-expect-error
+  const gameFile = req.files?.game[0].filename; const imageFile = req.files?.image[0].filename
+  const zipPath = path.join(__dirname, '../../games', `${title}${path.extname(gameFile)}`)
+  const unzipPath = path.join(__dirname, '../../games', title.replaceAll(/\s/g, '_'))
+  const imagePath = path.join(__dirname, '../../images', `_${title}${path.extname(imageFile)}`)
+  const renamedImagePath = path.join(__dirname, '../../images', `${title}${path.extname(imageFile)}`)
+  let directoryExists = true
+  try { await access(unzipPath) } catch { directoryExists = false }
+  if (directoryExists) {
+    await unlink(zipPath)
+    await unlink(imagePath)
+    return res.send(JSON.stringify({ successful: false, message: 'Title already exists' }))
+  }
+  await rename(imagePath, renamedImagePath)
+  await decompress(zipPath, unzipPath, {
+    filter: file => TestFileName(file.path),
+    map: file => {
+      const ext = file.path.slice(file.path.indexOf('.'))
+      file.path = `${title.replaceAll(/\s/g, '_')}${ext}`
+      return file
+    },
+    strip: 10
+  })
+  await unlink(zipPath)
   // eslint-disable-next-line new-cap
   const game = await new gameModel({ title, description })
   // @ts-expect-error
@@ -20,9 +51,14 @@ export const UploadGame = async (req: Request, res: Response): Promise<Response>
       await userModel.findByIdAndUpdate(game.creator, { ...creator })
       return { successful: true, message: 'Game successfully uploaded!' }
     })
-    .catch((error: Error) => {
-      if (error.message.includes('E11000')) return { successful: false, message: 'Title already exists' }
-      else return { successful: false, message: 'Game could not be uploaded' }
+    .catch(async (error: Error) => {
+      await rm(unzipPath, { recursive: true, force: true })
+      await unlink(renamedImagePath)
+      if (error.message.includes('E11000')) {
+        return { successful: false, message: 'Title already exists' }
+      } else {
+        return { successful: false, message: 'Game could not be uploaded' }
+      }
     })
   return res.send(JSON.stringify(response))
 }
@@ -41,42 +77,39 @@ export const GetGames = async (req: Request, res: Response): Promise<Response> =
   return res.send(JSON.stringify(games))
 }
 
-export const GetGame = (req: Request, res: Response): void => {
-  const games: string[] = []
-  readdirSync(path.join(__dirname, '../../games')).forEach(file => { games.push(file) })
-  if (req.query.title === undefined) {
-    return res.sendFile('')
-  } else {
-    let index = -1
-    for (let i = 0; i < games.length; i++) {
-      if (path.parse(games[i]).name === req.query.title) {
-        index = i
-        break
-      }
-    }
-    if (index === -1) {
-      return res.sendFile('')
-    } else {
-      return res.sendFile(path.join(__dirname, '../../games', games[index]))
-    }
-  }
+export const GetFile = async (req: Request, res: Response): Promise<void> => {
+  let { title, type } = req.query
+  if (title === undefined || title === null) return
+  if (type === undefined || type === null) return
+  title = String(title).replaceAll(/\s/g, '_')
+  if (type !== 'loader' && type !== 'data' && type !== 'framework' && type !== 'wasm') return
+  let filePath = path.join(__dirname, '../../games', String(title))
+  try { await access(filePath) } catch { return }
+  filePath = path.join(filePath,
+    `${title}.${type}${(type === 'loader' || type === 'framework') ? '.js' : ''}`)
+  return res.sendFile(filePath)
 }
 
-export const GetImage = (req: Request, res: Response): void => {
+export const GetImage = async (req: Request, res: Response): Promise<void> => {
+  const { title } = req.query
   const images: string[] = []
-  readdirSync(path.join(__dirname, '../../images')).forEach(file => { images.push(file) })
-  if (req.query.title === undefined) {
-    return res.sendFile(path.join(__dirname, '../../images', images[Math.floor(Math.random() * images.length)]))
+  const files = await readdir(path.join(__dirname, '../../images')).catch(() => [])
+  if (files.length <= 0) return
+  files.forEach(file => { images.push(file) })
+  if (title === undefined) {
+    return res.sendFile(path.join(__dirname, '../../images',
+      images[Math.floor(Math.random() * images.length)]))
   } else {
     let index = -1
     for (let i = 0; i < images.length; i++) {
-      if (path.parse(images[i]).name === req.query.title) {
+      if (path.parse(images[i]).name === title) {
         index = i
         break
       }
     }
     if (index === -1) {
-      return res.sendFile(path.join(__dirname, '../../images', images[Math.floor(Math.random() * images.length)]))
+      return res.sendFile(path.join(__dirname, '../../images',
+        images[Math.floor(Math.random() * images.length)]))
     } else {
       return res.sendFile(path.join(__dirname, '../../images', images[index]))
     }
@@ -84,74 +117,19 @@ export const GetImage = (req: Request, res: Response): void => {
 }
 
 export const GetInfo = async (req: Request, res: Response): Promise<Response> => {
-  let game
-  if (req.query.title === undefined) {
+  const { title } = req.query
+  let game: any = {}
+  if (title === undefined || title === null) {
     game = (await gameModel.aggregate([{ $sample: { size: 1 } }]))[0]
     await userModel.populate(game, { path: 'creator' })
   } else {
-    if (typeof req.query.title === 'string') {
-      game = await gameModel.findOne({ title: req.query.title }).populate('creator')
-    }
+    game = await gameModel.findOne({ title }).populate('creator')
   }
-  if (game === null) return res.send(JSON.stringify({ successful: false }))
-  const { title, description, creator }:
-  { title: string, description: string, creator: { email: string, username: string } } = game
-  return res.send(JSON.stringify({ successful: true, title, description, creator: creator.username }))
+  if (Object.keys(game).length <= 0) return res.send(JSON.stringify({}))
+  game = {
+    title: game.title,
+    description: game.description,
+    creator: game.creator.username
+  }
+  return res.send(JSON.stringify({ ...game }))
 }
-
-// const getFiles = (directory: string): string[] => {
-//   let files: string[] = []
-//   const items = readdirSync(directory, { withFileTypes: true })
-//   for (const item of items) {
-//     if (item.isDirectory()) {
-//       files = [...files, ...getFiles(`${directory}/${item.name}`)]
-//     } else {
-//       files.push(`${directory}/${item.name}`)
-//     }
-//   }
-//   return files
-// }
-
-// const clearBuild = (): void => {
-//   if (existsSync(path.join(__dirname, '../../build'))) {
-//     rmSync(path.join(__dirname, '../../build'), { recursive: true })
-//   }
-// }
-
-// clearBuild()
-// const games: string[] = []
-// readdirSync(path.join(__dirname, '../../games')).forEach(file => { games.push(file) })
-// if (req.query.title === undefined) {
-//   const response = { successful: false, message: 'Game not specified' }
-//   return res.send(JSON.stringify(response))
-// }
-// let index = -1
-// for (let i = 0; i < games.length; i++) {
-//   if (path.parse(games[i]).name === req.query.title) {
-//     index = i
-//     break
-//   }
-// }
-// if (index === -1) {
-//   const response = { successful: false, message: 'Game could not be found' }
-//   return res.send(JSON.stringify(response))
-// }
-// const response = await decompress(path.join(__dirname, '../../games', games[index]), 'build')
-//   .then(() => {
-//     let files: string[] = []
-//     getFiles('build').forEach(file => {
-//       if (file.includes('/Build/')) {
-//         const newPath =
-//             file.substring(0, file.indexOf('/Build/') + 7) + 'game' + file.slice(file.indexOf('.'))
-//         renameSync(file, newPath)
-//         files = [...files, newPath]
-//       }
-//     })
-//     res.sendFile(path.join(__dirname, '../..', files[0]))
-//     return { successful: true, message: 'Game found' }
-//   })
-//   .catch(() => {
-//     return { successful: false, message: 'Sever error' }
-//   })
-// clearBuild()
-// if (!response.successful) return res.send(JSON.stringify(response))

@@ -2,9 +2,9 @@ import React, { ReactElement, useState } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { animated, useSpring, useTransition } from 'react-spring'
 import Home from './views/Home'
-import Game from './views/Game'
+import GameExplore from './views/GameExplore'
 import GameForm from './views/GameForm'
-import Explore from './views/Explore'
+import Game from './views/Game'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Flash from './components/Flash'
@@ -40,9 +40,9 @@ const Views = (): ReactElement => {
             <animated.div style={styles}>
               <Routes location={item}>
                 <Route path='/' element={ <Home /> } />
-                <Route path='/explore' element={ <Explore /> } />
-                <Route path='/upload' element={ <GameForm /> } />
-                <Route path='/game/:title' element={ <Game /> } />
+                <Route path='/games' element={ <GameExplore /> } />
+                <Route path='/games/new' element={ <GameForm /> } />
+                <Route path='/games/:title' element={ <Game /> } />
                 <Route path='*' element={
                 <h1 className='h-full flex justify-center items-center
                 font-caviar text-white text-2xl text-deep-shadow-custom'>

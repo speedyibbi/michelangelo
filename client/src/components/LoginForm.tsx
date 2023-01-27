@@ -16,7 +16,7 @@ const LoginForm = (props: { onSuccess: Function }): ReactElement => {
   }
 
   const login = async (data: string): Promise<void> => {
-    const response = await fetch('/user/login', {
+    const response = await fetch('/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ const LoginForm = (props: { onSuccess: Function }): ReactElement => {
     })
 
     if (response.successful === true) {
-      const user = await fetch('/user', { method: 'GET' })
+      const user = await fetch('/users', { method: 'GET' })
         .then(async (res) => await res.json())
       if (user.email !== undefined && user.username !== undefined) {
         setUser({ email: user.email, username: user.username })

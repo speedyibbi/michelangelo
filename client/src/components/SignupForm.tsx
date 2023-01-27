@@ -16,7 +16,7 @@ const SignupForm = (props: { onSuccess: Function }): ReactElement => {
   }
 
   const signup = async (data: string): Promise<void> => {
-    const response = await fetch('/user/register', {
+    const response = await fetch('/users/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ const SignupForm = (props: { onSuccess: Function }): ReactElement => {
 
     if (response.successful === true) {
       setFlash({ type: 'success', text: response.message })
-      const login = await fetch('/user/login', {
+      const login = await fetch('/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -41,7 +41,7 @@ const SignupForm = (props: { onSuccess: Function }): ReactElement => {
       })
 
       if (login.successful === true) {
-        const user = await fetch('/user', { method: 'GET' })
+        const user = await fetch('/users', { method: 'GET' })
           .then(async (res) => await res.json())
         if (user.email !== undefined && user.username !== undefined) {
           setUser({ email: user.email, username: user.username })
