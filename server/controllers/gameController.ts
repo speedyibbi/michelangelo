@@ -69,10 +69,10 @@ export const GetGames = async (req: Request, res: Response): Promise<Response> =
   if (limit === undefined) limit = '100'
   if (parseInt(offset) < 0) offset = '0'
   if (parseInt(limit) < 0 || parseInt(limit) > 100) limit = '100'
-  const games: Array<{ title?: string, description?: string }> = []
+  const games: Array<{ id?: string, title?: string, description?: string }> = []
   const result = await gameModel.find({}).skip(parseInt(offset)).limit(parseInt(limit))
   result.forEach(game => {
-    games.push({ title: game.title, description: game.description })
+    games.push({ id: game._id, title: game.title, description: game.description })
   })
   return res.send(JSON.stringify(games))
 }

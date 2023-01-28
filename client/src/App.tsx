@@ -9,7 +9,7 @@ const App = (): ReactElement => {
     <Suspense fallback={ <Loader /> }>
       <section className='min-h-screen relative overflow-hidden'>
         <Views />
-        <div className='w-full h-full absolute bg-main bg-cover -z-10'>
+        <div className='w-full h-full absolute bg-main bg-cover bg-center -z-10'>
           <WebGLPlayground />
         </div>
       </section>

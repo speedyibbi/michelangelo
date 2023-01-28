@@ -30,8 +30,8 @@ const Game = (): ReactElement => {
   }, [])
 
   return (
-    <div className='w-11/12 h-full m-auto relative flex justify-between items-center'>
-      <div className='w-1/3 h-5/6'>
+    <div className='w-full h-full m-auto py-10 relative flex flex-col sm:flex-row justify-around sm:justify-between items-center'>
+      <div className='w-4/12 h-full m-auto hidden lg:block'>
         <div className='w-full h-1/6 flex justify-start items-center'>
           <button onClick={goBack} className='my-3 flex items-center
           font-squids text-white text-xl text-deep-shadow-custom box-shadow-custom
@@ -53,7 +53,7 @@ const Game = (): ReactElement => {
           </div>
         </div>
       </div>
-      <div className='w-7/12 aspect-video relative border-2 bg-neutral-900
+      <div className='w-11/12 lg:w-6/12 m-auto rotate-90 sm:rotate-0 aspect-square sm:aspect-video relative border-2 bg-neutral-900
       rounded-sm overflow-hidden box-shadow-custom'>
           <UnityEngine title={(title !== undefined && title !== null) ? title : ''} />
       </div>

@@ -19,9 +19,9 @@ const Home = (): ReactElement => {
 
   return (
     <article className='h-full grid grid-cols-2 overflow-hidden'>
-      <div className='h-full flex flex-col justify-center'>
+      <div className='h-full hidden md:flex flex-col justify-center'>
         <div className='h-2/6 bg-contain bg-center bg-gif_home bg-no-repeat' />
-        <div className='group h-4/6 mx-16 mb-7 relative border-2 bg-neutral-900 rounded-sm overflow-hidden'>
+        <div className='group h-3/6 lg:h-4/6 mx-10 lg:mx-16 mb-7 relative border-2 bg-neutral-900 rounded-sm overflow-hidden'>
           <Link to={`/games/${game}`}
           className='w-full h-full p-6 absolute flex items-end bg-neutral-900 bg-opacity-30 z-10'>
             <p className='font-caviar text-special text-4xl text-shadow-custom glowingText-special'>
@@ -31,7 +31,7 @@ const Home = (): ReactElement => {
           className='group-hover:scale-125 w-full h-full transition-all z-0' />
         </div>
       </div>
-      <p className='w-3/4 h-11/12 m-auto col-span-1 font-caviar
+      <p className='w-3/4 h-11/12 m-auto col-span-2 md:col-span-1 font-caviar
       text-white text-2xl text-center text-shadow-custom'>
         &quot;{ quote?.body }&quot; <br /> - { quote?.game }<br />
         <Link to='/games'>

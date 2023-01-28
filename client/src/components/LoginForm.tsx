@@ -45,19 +45,19 @@ const LoginForm = (props: { onSuccess: Function }): ReactElement => {
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className='py-3 lg:p-0'>
       <input type='text' placeholder='email'
       // eslint-disable-next-line no-useless-escape
       {...register('email', { required: true, pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ })}
-      className={`m-6 p-2 pl-5 text-white text-sm border-2
+      className={`mx-2 lg:m-3 file:xl:m-6 p-2 pl-5 text-white text-sm border-2
       ${((errors.email?.message) != null) ? 'border-special' : 'border-primary'}
       rounded-full outline-none box-shadow-custom transition-all bg-transparent`} />
       <input type='password' placeholder='password'
       {...register('password', { required: true })}
-      className={`m-6 p-2 pl-5 text-white text-sm border-2
+      className={`mx-2 lg:m-3 xl:m-6 p-2 pl-5 text-white text-sm border-2
       ${((errors.password?.message) != null) ? 'border-special' : 'border-primary'}
       rounded-full outline-none box-shadow-custom transition-all bg-transparent`} />
-      <button type='submit' className='m-5 p-3 font-squids text-primary text-sm rounded-md
+      <button type='submit' className='ml-2 lg:m-3 xl:m-5 p-3 font-squids text-primary text-sm rounded-md
       box-shadow-custom border-2 border-primary transition-all
       hover:text-stone-800 hover:bg-primary hover:scale-110'>Log In</button>
     </form>

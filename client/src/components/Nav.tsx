@@ -31,7 +31,6 @@ const Nav = (): ReactElement => {
   const signOut = async (): Promise<void> => {
     const response = await fetch('/users/logout', { method: 'GET' })
       .then(async (res) => await res.json())
-
     if (response.successful === true) {
       setFlash({ type: 'success', text: response.message })
       setUser({})
@@ -48,52 +47,51 @@ const Nav = (): ReactElement => {
         setUser({ email: user.email, username: user.username })
       }
     }
-
     void getUser()
   }, [])
 
   return (
-    <nav className='w-full h-full flex items-center font-caviar'>
-      <Link to='/' className='w-1/2 flex justify-center'>
-        <img src="/images/favicon.png" alt="" className='w-7 mx-3 my-auto image-shadow-custom'/>
-        <h2 className='font-squids text-primary text-2xl text-deep-shadow-custom'>
+    <nav className='w-full h-full px-auto py-3 flex flex-wrap items-center font-caviar'>
+      <Link to='/' className='w-full lg:w-1/2 mt-6 mb-2 lg:my-0 flex justify-center'>
+        <img src="/images/favicon.png" alt='' className='w-7 mx-3 my-auto image-shadow-custom'/>
+        <h2 className='my-auto font-squids text-primary text-2xl text-deep-shadow-custom'>
           michelangelo</h2>
       </Link>
-      <div className='w-1/2 pr-10 flex justify-end items-center'>
+      <div className='w-full lg:w-1/2 lg:pr-10 flex justify-center lg:justify-end items-center'>
         {transition((style, item) => item
-          ? <animated.div style={style} className='absolute'>
+          ? <animated.div style={style} className='lg:absolute'>
             {(formType === 1)
-              ? <div className='flex justify-evenly'>
+              ? <div className='w-full flex justify-evenly'>
                   <LoginForm onSuccess={() => { formSet() }} />
                   <button onClick={() => { formSet() } }>
                   <FontAwesomeIcon icon={faArrowUp}
-                    className='ml-2 text-primary text-xl transition-all hover:scale-110' /></button>
+                    className='ml-2 hidden lg:block text-primary text-xl transition-all hover:scale-110' /></button>
                 </div>
               : (formType === 2)
-                  ? <div className='flex justify-evenly'>
+                  ? <div className='w-full flex justify-evenly'>
                       <SignupForm onSuccess={() => { formSet() }} />
                       <button onClick={() => { formSet() } }>
                       <FontAwesomeIcon icon={faArrowUp}
-                        className='ml-2 text-primary text-xl transition-all hover:scale-110' /></button>
+                        className='ml-2 hidden lg:block text-primary text-xl transition-all hover:scale-110' /></button>
                     </div>
                   : ''}
             </animated.div>
-          : <animated.div style={style} className='absolute'>
+          : <animated.div style={style} className='lg:absolute'>
           {user.email === undefined && user.username === undefined
             ? <><button disabled={transitioning} onClick={() => { formSet(true, 1, false) }}
-                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                className='mx-1 sm:m-5 px-10 py-3 lg:p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Log In</button>
                 <button disabled={transitioning} onClick={() => { formSet(true, 2, false) }}
-                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                className='mx-1 sm:m-5 px-10 py-3 lg:p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Sign Up</button></>
             : <><Link to='/games/new'
-                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                className='mx-1 sm:m-5 px-5 sm:px-10 py-3 lg:p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Upload Game</Link>
                 <button onClick={() => { void signOut() }}
-                className='m-5 p-3 relative font-squids text-primary text-sm border-2 border-primary
+                className='mx-1 sm:m-5 px-5 sm:px-10 py-3 lg:p-3 relative font-squids text-primary text-sm border-2 border-primary
                 rounded-md box-shadow-custom transition-all hover:bg-primary hover:text-stone-800'>
                 Sign Out</button></>}
             </animated.div>

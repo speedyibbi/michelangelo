@@ -9,7 +9,6 @@ import mongoStore from 'connect-mongo'
 import userModel from './models/userModel'
 import userRoutes from './routes/userRoutes'
 import gameRoutes from './routes/gameRoutes'
-import ExpressError from './utilities/expressError'
 
 if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -58,8 +57,8 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/users/', userRoutes)
 app.use('/games/', gameRoutes)
 
-app.all('*', (_req: Request, _res: Response, next: NextFunction) => {
-  next(new ExpressError('Page not found', 404))
+app.all('*', (_req: Request, res: Response) => {
+  res.redirect('/')
 })
 
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
