@@ -23,28 +23,6 @@ const gameSchema = new mongoose.Schema({
       unique: false
     }
   },
-  files: {
-    data: {
-      type: String,
-      required: true,
-      unique: false
-    },
-    framework: {
-      type: String,
-      required: true,
-      unique: false
-    },
-    loader: {
-      type: String,
-      required: true,
-      unique: false
-    },
-    wasm: {
-      type: String,
-      required: true,
-      unique: false
-    }
-  },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
