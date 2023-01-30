@@ -1,12 +1,12 @@
 import React, { ReactElement } from 'react'
 import { Unity, useUnityContext } from 'react-unity-webgl'
 
-const UnityEngine = (props: { title: string }): ReactElement => {
+const UnityEngine = (props: { game: string }): ReactElement => {
   const { unityProvider } = useUnityContext({
-    loaderUrl: props.title !== '' ? `/games/file?title=${props.title}&type=loader` : '',
-    dataUrl: props.title !== '' ? `/games/file?title=${props.title}&type=data` : '',
-    frameworkUrl: props.title !== '' ? `/games/file?title=${props.title}&type=framework` : '',
-    codeUrl: props.title !== '' ? `/games/file?title=${props.title}&type=wasm` : ''
+    loaderUrl: `/games/${props.game}/file?type=loader`,
+    dataUrl: `/games/${props.game}/file?type=data`,
+    frameworkUrl: `/games/${props.game}/file?type=framework`,
+    codeUrl: `/games/${props.game}/file?type=wasm`
   })
 
   return (

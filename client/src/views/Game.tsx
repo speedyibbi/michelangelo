@@ -4,27 +4,25 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { ViewContext } from '../Views'
+import { Game } from '../utilities/interfaces'
 
-const Game = (): ReactElement => {
+const GameView = (): ReactElement => {
   const navigate = useNavigate()
   const { title } = useParams()
   const { setFlash } = useContext(ViewContext)
-  const [game, setGame] =
-  useState<{ title?: string, description?: string, creator?: string }>({})
+  const [game, setGame] = useState<Game>()
 
-  const goBack = (): void => {
-    navigate(-1)
-  }
+  const goBack = (): void => { navigate(-1) }
 
   useEffect(() => {
     const getGameInfo = async (): Promise<void> => {
-      await fetch(`/games/info?title=${title !== undefined ? title : ''}`, { method: 'GET' })
+      const response = await fetch(`/games/${title !== undefined ? title : ''}`, { method: 'GET' })
         .then(async (res) => await res.json())
-        .then((response) => setGame(response))
         .catch(() => {
           navigate('/')
           setFlash({ type: 'error', text: 'Could not find game' })
         })
+      setGame(response)
     }
     void getGameInfo()
   }, [])
@@ -45,20 +43,20 @@ const Game = (): ReactElement => {
         font-caviar text-secondary text-xl text-shadow-custom
         border-2 border-white rounded-sm bg-neutral-900 box-shadow-custom'>
           <div>
-            <p className='my-3 px-5'><span className='text-white'>Title - </span>{game.title}</p>
-            <p className='my-3 px-5'><span className='text-white'>Description - </span>{game.description}</p>
+            <p className='my-3 px-5'><span className='text-white'>Title - </span>{game !== undefined ? game.title : ''}</p>
+            <p className='my-3 px-5'><span className='text-white'>Description - </span>{game !== undefined ? game.description : ''}</p>
           </div>
           <div>
-            <p className='my-3 px-5'><span className='text-white'>Created by </span>{game.creator}</p>
+            <p className='my-3 px-5'><span className='text-white'>Created by </span>{game !== undefined ? game.creator : ''}</p>
           </div>
         </div>
       </div>
       <div className='w-11/12 lg:w-6/12 m-auto rotate-90 sm:rotate-0 aspect-square sm:aspect-video relative border-2 bg-neutral-900
       rounded-sm overflow-hidden box-shadow-custom'>
-          <UnityEngine title={(title !== undefined && title !== null) ? title : ''} />
+        <UnityEngine game={title !== undefined ? title : ''} />
       </div>
     </div>
   )
 }
 
-export default Game
+export default GameView

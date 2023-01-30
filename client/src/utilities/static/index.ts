@@ -1,6 +1,6 @@
-import { quoteInterface } from '../interfaces'
+import { Quote } from '../interfaces'
 
-export const quotes: quoteInterface[] = [
+export const quotes: Quote[] = [
   {
     body: 'What is better? To be born good or to overcome your evil nature through great effort?',
     game: 'Paarthurnax, The Elder Scrolls V: Skyrim'

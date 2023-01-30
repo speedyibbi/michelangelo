@@ -1,9 +1,37 @@
 import { Request, Response } from 'express'
 import path from 'path'
-import { access, readdir, rename, rm, unlink } from 'fs/promises'
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import decompress from 'decompress'
 import gameModel from '../models/gameModel'
 import userModel from '../models/userModel'
+
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require('dotenv').config()
+}
+
+const s3Bucket = process.env.S3_BUCKET
+const s3BucketRegion = process.env.S3_BUCKET_REGION
+const awsAccessKey = process.env.AWS_ACCESS_KEY
+const awsSecretKey = process.env.AWS_SECRET_KEY
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: String(awsAccessKey),
+    secretAccessKey: String(awsSecretKey)
+  },
+  region: s3BucketRegion
+})
+
+const GenerateS3Url = async (input: string): Promise<string> => {
+  const s3Params = {
+    Bucket: s3Bucket,
+    Key: input
+  }
+  const command = new GetObjectCommand(s3Params)
+  return await getSignedUrl(s3, command, { expiresIn: 3600 })
+}
 
 const TestFileName = (input: string): boolean => {
   const dataRegex = /.*\.data/i
@@ -17,31 +45,8 @@ const TestFileName = (input: string): boolean => {
 export const UploadGame = async (req: Request, res: Response): Promise<Response> => {
   const { title, description }: { title: string, description: string } = req.body
   // @ts-expect-error
-  const gameFile = req.files?.game[0].filename; const imageFile = req.files?.image[0].filename
-  const zipPath = path.join(__dirname, '../../games', `${title}${path.extname(gameFile)}`)
-  const unzipPath = path.join(__dirname, '../../games', title.replaceAll(/\s/g, '_'))
-  const imagePath = path.join(__dirname, '../../images', `_${title}${path.extname(imageFile)}`)
-  const renamedImagePath = path.join(__dirname, '../../images', `${title}${path.extname(imageFile)}`)
-  let directoryExists = true
-  try { await access(unzipPath) } catch { directoryExists = false }
-  if (directoryExists) {
-    await unlink(zipPath)
-    await unlink(imagePath)
-    return res.send(JSON.stringify({ successful: false, message: 'Title already exists' }))
-  }
-  await rename(imagePath, renamedImagePath)
-  await decompress(zipPath, unzipPath, {
-    filter: file => TestFileName(file.path),
-    map: file => {
-      const ext = file.path.slice(file.path.indexOf('.'))
-      file.path = `${title.replaceAll(/\s/g, '_')}${ext}`
-      return file
-    },
-    strip: 10
-  })
-  await unlink(zipPath)
   // eslint-disable-next-line new-cap
-  const game = await new gameModel({ title, description })
+  const game = await new gameModel({ title, description, image: { type: path.extname(req.files?.image[0].originalname) } })
   // @ts-expect-error
   game.creator = req.user?._id
   const response = await game.save()
@@ -52,84 +57,96 @@ export const UploadGame = async (req: Request, res: Response): Promise<Response>
       return { successful: true, message: 'Game successfully uploaded!' }
     })
     .catch(async (error: Error) => {
-      await rm(unzipPath, { recursive: true, force: true })
-      await unlink(renamedImagePath)
       if (error.message.includes('E11000')) {
         return { successful: false, message: 'Title already exists' }
       } else {
+        console.log(error)
         return { successful: false, message: 'Game could not be uploaded' }
       }
     })
+  if (response.successful === false) return res.send(JSON.stringify(response))
+  // @ts-expect-error
+  const extractedFiles = await decompress(req.files?.game[0].buffer, {
+    filter: file => TestFileName(file.path),
+    map: file => {
+      const ext = file.path.slice(file.path.indexOf('.'))
+      file.path = `${title.replaceAll(/\s/g, '_')}${ext}`
+      return file
+    },
+    strip: 10
+  })
+  // @ts-expect-error
+  const files = [...extractedFiles, req.files?.image[0]]
+  await Promise.all(files.map(async (file) => {
+    const s3Params = {
+      Bucket: s3Bucket,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      Key: `${title}/${file.path === undefined ? `${title}${path.extname(file.originalname)}` : file.path}`,
+      Body: file.data === undefined ? file.buffer : file.data
+    }
+    const command = new PutObjectCommand(s3Params)
+    await s3.send(command)
+  }))
   return res.send(JSON.stringify(response))
 }
 
 export const GetGames = async (req: Request, res: Response): Promise<Response> => {
   let { offset, limit }: { limit?: string, offset?: string } = req.query
-  if (offset === undefined) offset = '0'
-  if (limit === undefined) limit = '100'
-  if (parseInt(offset) < 0) offset = '0'
-  if (parseInt(limit) < 0 || parseInt(limit) > 100) limit = '100'
-  const games: Array<{ id?: string, title?: string, description?: string }> = []
+  if (offset === undefined || parseInt(offset) < 0) offset = '0'
+  if (limit === undefined || parseInt(limit) < 0 || parseInt(limit) > 100) limit = '100'
+  const games: Array<{
+    id?: string
+    title?: string
+    description?: string
+    image?: string
+    creator?: string }> = []
   const result = await gameModel.find({}).skip(parseInt(offset)).limit(parseInt(limit))
-  result.forEach(game => {
-    games.push({ id: game._id, title: game.title, description: game.description })
-  })
+  await Promise.all(result.map(async (game) => {
+    const title = String(game.title).replaceAll(/\s/g, '_')
+    const url = await GenerateS3Url(`${String(title)}/${String(title)}${String(game.image.type)}`)
+    games.push({ id: game._id, title: game.title, description: game.description, image: url, creator: game.creator.username })
+  }))
   return res.send(JSON.stringify(games))
 }
 
-export const GetFile = async (req: Request, res: Response): Promise<void> => {
-  let { title, type } = req.query
-  if (title === undefined || title === null) return
-  if (type === undefined || type === null) return
-  title = String(title).replaceAll(/\s/g, '_')
-  if (type !== 'loader' && type !== 'data' && type !== 'framework' && type !== 'wasm') return
-  let filePath = path.join(__dirname, '../../games', String(title))
-  try { await access(filePath) } catch { return }
-  filePath = path.join(filePath,
-    `${title}.${type}${(type === 'loader' || type === 'framework') ? '.js' : ''}`)
-  return res.sendFile(filePath)
-}
-
-export const GetImage = async (req: Request, res: Response): Promise<void> => {
-  const { title } = req.query
-  const images: string[] = []
-  const files = await readdir(path.join(__dirname, '../../images')).catch(() => [])
-  if (files.length <= 0) return
-  files.forEach(file => { images.push(file) })
-  if (title === undefined) {
-    return res.sendFile(path.join(__dirname, '../../images',
-      images[Math.floor(Math.random() * images.length)]))
-  } else {
-    let index = -1
-    for (let i = 0; i < images.length; i++) {
-      if (path.parse(images[i]).name === title) {
-        index = i
-        break
-      }
-    }
-    if (index === -1) {
-      return res.sendFile(path.join(__dirname, '../../images',
-        images[Math.floor(Math.random() * images.length)]))
-    } else {
-      return res.sendFile(path.join(__dirname, '../../images', images[index]))
-    }
-  }
-}
-
-export const GetInfo = async (req: Request, res: Response): Promise<Response> => {
-  const { title } = req.query
+export const GetGame = async (req: Request, res: Response): Promise<Response> => {
+  const { title } = req.params
   let game: any = {}
-  if (title === undefined || title === null) {
-    game = (await gameModel.aggregate([{ $sample: { size: 1 } }]))[0]
-    await userModel.populate(game, { path: 'creator' })
-  } else {
+  if (title !== undefined || title !== null || title !== '') {
     game = await gameModel.findOne({ title }).populate('creator')
+  } else {
+    return res.send(JSON.stringify({}))
   }
-  if (Object.keys(game).length <= 0) return res.send(JSON.stringify({}))
+  const imageUrl = await GenerateS3Url(`${String(title.replaceAll(/\s/g, '_'))}/${String(title.replaceAll(/\s/g, '_'))}${String(game.image.type)}`)
   game = {
+    id: game._id,
     title: game.title,
     description: game.description,
+    image: imageUrl,
     creator: game.creator.username
   }
-  return res.send(JSON.stringify({ ...game }))
+  return res.send(JSON.stringify(game))
+}
+
+export const GetFile = async (req: Request, res: Response): Promise<any> => {
+  const title = req.params.title.replaceAll(/\s/g, '_')
+  const { type } = req.query
+  let key = ''
+  if (type === 'data' || type === 'framework' || type === 'loader' || type === 'wasm') {
+    if (type === 'data' || type === 'wasm') {
+      key = `${title}/${title}.${String(type)}`
+    } else {
+      key = `${title}/${title}.${String(type)}.js`
+    }
+  } else {
+    console.log('error')
+  }
+  const s3Params = {
+    Bucket: s3Bucket,
+    Key: key
+  }
+  const command = new GetObjectCommand(s3Params)
+  const { Body } = await s3.send(command)
+  // @ts-expect-error
+  return Body.pipe(res)
 }

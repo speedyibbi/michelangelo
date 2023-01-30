@@ -1,17 +1,17 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { quoteInterface } from '../utilities/interfaces'
+import { Game, Quote } from '../utilities/interfaces'
 import { quotes } from '../utilities/static'
 
 const Home = (): ReactElement => {
-  const [game, setGame] = useState<string>('')
-  const [quote, setQuote] = useState<quoteInterface>()
+  const [game, setGame] = useState<Game>()
+  const [quote, setQuote] = useState<Quote>()
 
   useEffect(() => {
     const getGame = async (): Promise<void> => {
-      const game = await fetch('/games/info', { method: 'GET' })
+      const game = await fetch('/games/', { method: 'GET' })
         .then(async (res) => await res.json())
-      setGame(game.title)
+      setGame(game[0])
     }
     void getGame()
     setQuote(quotes[Math.floor(Math.random() * quotes.length)])
@@ -22,12 +22,12 @@ const Home = (): ReactElement => {
       <div className='h-full hidden md:flex flex-col justify-center'>
         <div className='h-2/6 bg-contain bg-center bg-gif_home bg-no-repeat' />
         <div className='group h-3/6 lg:h-4/6 mx-10 lg:mx-16 mb-7 relative border-2 bg-neutral-900 rounded-sm overflow-hidden'>
-          <Link to={`/games/${game}`}
+          <Link to={game !== undefined ? `/games/${game.title}` : ''}
           className='w-full h-full p-6 absolute flex items-end bg-neutral-900 bg-opacity-30 z-10'>
             <p className='font-caviar text-special text-4xl text-shadow-custom glowingText-special'>
               Featured</p>
           </Link>
-          <img src={game !== '' ? `/games/image?title=${game}` : ''} alt=''
+          <img src={game !== undefined ? game.image : ''} alt=''
           className='group-hover:scale-125 w-full h-full transition-all z-0' />
         </div>
       </div>

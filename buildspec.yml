@@ -25,6 +25,5 @@ artifacts:
     - client/build/*
     - server/**/*
     - server/*
-    - .platform/*
     - Procfile
   discard-paths: no

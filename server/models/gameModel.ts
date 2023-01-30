@@ -11,6 +11,40 @@ const gameSchema = new mongoose.Schema({
     required: true,
     unique: false
   },
+  image: {
+    url: {
+      type: String,
+      required: false,
+      unique: false
+    },
+    type: {
+      type: String,
+      required: true,
+      unique: false
+    }
+  },
+  files: {
+    data: {
+      type: String,
+      required: true,
+      unique: false
+    },
+    framework: {
+      type: String,
+      required: true,
+      unique: false
+    },
+    loader: {
+      type: String,
+      required: true,
+      unique: false
+    },
+    wasm: {
+      type: String,
+      required: true,
+      unique: false
+    }
+  },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
