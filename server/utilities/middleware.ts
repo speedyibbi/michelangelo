@@ -1,6 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import { join } from 'path'
-import { access, mkdir } from 'fs/promises'
 
 export const isLoggedIn = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   if (!req.isAuthenticated()) {
@@ -10,16 +8,7 @@ export const isLoggedIn = async (req: Request, res: Response, next: NextFunction
   next()
 }
 
-export const checkDirectories = async (_req: Request, _res: Response, next: NextFunction): Promise<void> => {
-  try {
-    await access((join(__dirname, '../../games')))
-  } catch {
-    await mkdir(join(__dirname, '../../games'), { recursive: true })
-  }
-  try {
-    await access((join(__dirname, '../../images')))
-  } catch {
-    await mkdir(join(__dirname, '../../images'), { recursive: true })
-  }
+export const extendTimeout = (_req: Request, res: Response, next: NextFunction): void => {
+  res.setTimeout((1000 * 60 * 5), () => { })
   next()
 }

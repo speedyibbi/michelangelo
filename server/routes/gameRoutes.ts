@@ -1,7 +1,7 @@
 import express from 'express'
 import multer from 'multer'
 import { UploadGame, GetGames, GetGame, GetFile } from '../controllers/gameController'
-import { isLoggedIn } from '../utilities/middleware'
+import { isLoggedIn, extendTimeout } from '../utilities/middleware'
 import AsyncCatcher from '../utilities/asyncCatcher'
 // eslint-disable-next-line new-cap
 const router = express.Router()
@@ -12,7 +12,8 @@ const upload = multer({ storage })
 router.route('/')
   .get(AsyncCatcher(GetGames))
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  .post(isLoggedIn, upload.fields([{ name: 'game', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
+  .post(isLoggedIn, extendTimeout,
+    upload.fields([{ name: 'game', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
     AsyncCatcher(UploadGame))
 
 router.route('/:title')
