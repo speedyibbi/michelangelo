@@ -82,7 +82,8 @@ export const UploadGame = async (req: Request, res: Response): Promise<Response>
       Bucket: s3Bucket,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       Key: `${title}/${file.path === undefined ? `${title}${path.extname(file.originalname)}` : file.path}`,
-      Body: file.data === undefined ? file.buffer : file.data
+      Body: file.data === undefined ? file.buffer : file.data,
+      ContentType: 'application/octet-stream'
     }
     const command = new PutObjectCommand(s3Params)
     await s3.send(command)
