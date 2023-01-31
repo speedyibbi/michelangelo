@@ -25,6 +25,7 @@ artifacts:
     - client/build/*
     - server/**/*
     - server/*
-    - .ebextensions/*
+    - .platform/**/*
+    - .platform/*
     - Procfile
   discard-paths: no
